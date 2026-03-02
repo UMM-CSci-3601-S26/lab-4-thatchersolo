@@ -1,9 +1,12 @@
 export interface Inventory {
-  _id?: string;
-  school: string;
-  grade: string;
-  item?: string;
-  description: string;
-  quantity: number;
-  properties?: string[];
+  item: string,
+  description: string,
+  brand: string,
+  color:string,
+  size: string,
+  type: string,
+  material:string,
+  count: number,
+  quantity: number,
+  notes: string
 }

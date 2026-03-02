@@ -18,6 +18,7 @@ import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Inventory } from './inventory';
 import { InventoryService } from './inventory.service';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-inventory-component',
@@ -39,11 +40,13 @@ import { InventoryService } from './inventory.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
+    MatPaginatorModule
   ],
 })
 export class InventoryComponent {
-  displayedColumns: string[] = ['school', 'grade', 'item', 'description', 'quantity'];
+  displayedColumns: string[] = ['item', 'description', 'brand', 'color', 'size', 'type', 'material', 'count', 'quantity', 'notes'];
   dataSource = new MatTableDataSource<Inventory>([]);
+  readonly page = viewChild<MatPaginator>(MatPaginator)
   readonly sort = viewChild<MatSort>(MatSort);
 
   private snackBar = inject(MatSnackBar);
@@ -53,6 +56,7 @@ export class InventoryComponent {
     effect(() => {
       this.dataSource.data = this.serverFilteredInventory();
       this.dataSource.sort = this.sort();
+      this.dataSource.paginator = this.page();
     });
   }
 

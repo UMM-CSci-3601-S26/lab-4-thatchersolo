@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" matSort (matSortChange)="announceSortChange($event)" >
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 demo-table">
   <!-- Item Column -->
   <ng-container matColumnDef="item">
     <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by item">Item</th>
@@ -76,3 +76,10 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<mat-paginator [length]="215"
+              [pageSize]="25"
+              [pageSizeOptions]="[10, 25, 50, 100]"
+              aria-label="Select page">
+</mat-paginator>
+
