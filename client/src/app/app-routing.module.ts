@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'users/new', component: AddUserComponent, title: 'Add User'},
   {path: 'users/:id', component: UserProfileComponent, title: 'User Profile'},
   {path: 'companies', component: CompanyListComponent, title: 'Companies'},
-  {path: 'inventory', component: InventoryComponent, title: 'Inventory'},
+  {path: 'inventory', component: InventoryComponent, title: 'Inventory'}
 ];
 
 @NgModule({
