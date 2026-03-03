@@ -9,7 +9,7 @@ describe('App', () => {
     page.getAppTitle().should('contain', 'CSCI 3601 - HGBT Iteration 1');
   });
 
-  it('The sidenav should open, navigate to "Users" and back to "Home"', () => {
+  it('The sidenav should open, navigate to "Inventory" and back to "Home"', () => {
     // Before clicking on the button, the sidenav should be hidden
     page.getSidenav()
       .should('be.hidden');
@@ -17,8 +17,8 @@ describe('App', () => {
       .should('be.visible');
 
     page.getSidenavButton().click();
-    page.getNavLink('Users').click();
-    cy.url().should('match', /\/users$/);
+    page.getNavLink('Inventory').click();
+    cy.url().should('match', /\/inventory$/);
     page.getSidenav()
       .should('be.hidden');
 

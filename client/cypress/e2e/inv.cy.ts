@@ -15,26 +15,6 @@ describe('Inventory', () => {
     page.getAppTitle().should('contain', 'Inventory');
   });
 
-  it('The sidenav should open, navigate to "Inventory" and back to "Home"', () => {
-    // Before clicking on the button, the sidenav should be hidden
-    page.getSidenav()
-      .should('be.hidden');
-    page.getSidenavButton()
-      .should('be.visible');
-
-    page.getSidenavButton().click();
-    page.getNavLink('Inventory').click();
-    cy.url().should('match', /\/inventory$/);
-    page.getSidenav()
-      .should('be.hidden');
-
-    page.getSidenavButton().click();
-    page.getNavLink('Home').click();
-    cy.url().should('match', /^https?:\/\/[^/]+\/?$/);
-    page.getSidenav()
-      .should('be.hidden');
-  });
-
   it('Should display inventory items', () => {
     page.getSidenavButton().click();
     page.getNavLink('Inventory').click();
