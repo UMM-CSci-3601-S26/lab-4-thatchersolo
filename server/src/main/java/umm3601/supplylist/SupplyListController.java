@@ -23,11 +23,12 @@ import umm3601.Controller;
 
 public class SupplyListController implements Controller {
 
-  private static final String API_INVENTORY = "/api/supplylist";
-  private static final String API_INVENTORY_BY_ID = "/api/supplylist/{id}";
+  private static final String API_SUPPLYLIST = "/api/supplylist";
+  private static final String API_SUPPLYLIST_BY_ID = "/api/supplylist/{id}";
 
   static final String SCHOOL_KEY = "school";
-  static final String GRADE_KEY = "grade;"
+  static final String GRADE_KEY = "grade";
+  static final String TEACHER_KEY = "teacher";
   static final String ITEM_KEY = "item";
   static final String BRAND_KEY = "brand";
   static final String COUNT_KEY = "count";
@@ -46,35 +47,35 @@ public class SupplyListController implements Controller {
     SupplyListCollection = JacksonMongoCollection.builder().build(
       database,
       "supplylist",
-      supplylist.class,
+      SupplyList.class,
       UuidRepresentation.STANDARD
     );
   }
 
-  public void getInventory(Context ctx) {
+  public void getList(Context ctx) {
     String id = ctx.pathParam("id");
-    Inventory inv;
+    SupplyList supplylistinv;
 
     try {
-      list = SupplyListCollection.find(eq("_id", new ObjectId(id))).first();
+      supplylistinv = SupplyListCollection.find(eq("_id", new ObjectId(id))).first();
     } catch (IllegalArgumentException e) {
-      throw new BadRequestResponse("The requested inventory id wasn't a legal Mongo Object ID.");
+      throw new BadRequestResponse("The requested supply list id wasn't a legal Mongo Object ID.");
     }
 
-    if (inv == null) {
-      throw new NotFoundResponse("The requested inventory item was not found");
+    if (supplylistinv == null) {
+      throw new NotFoundResponse("The requested supply list item was not found");
     } else {
-      ctx.json(inv);
+      ctx.json(supplylistinv);
       ctx.status(HttpStatus.OK);
     }
   }
 
-  public void getInventories(Context ctx) {
+  public void getSupplyLists(Context ctx) {
     Bson filter = constructFilter(ctx);
 
-    FindIterable<Inventory> results = inventoryCollection.find(filter);
+    FindIterable<SupplyList> results = SupplyListCollection.find(filter);
 
-    ArrayList<Inventory> matching = results.into(new ArrayList<>());
+    ArrayList<SupplyList> matching = results.into(new ArrayList<>());
 
     ctx.json(matching);
     ctx.status(HttpStatus.OK);
@@ -144,7 +145,7 @@ public class SupplyListController implements Controller {
 
   @Override
   public void addRoutes(Javalin server) {
-    server.get(API_SUPPLYLIST, this::getSupplyInv);
-    server.get(API_INVENTORY_BY_ID, this::getSupplyInventories);
+    server.get(API_SUPPLYLIST, this::getList);
+    server.get(API_SUPPLYLIST_BY_ID, this::getSupplyLists);
   }
 }

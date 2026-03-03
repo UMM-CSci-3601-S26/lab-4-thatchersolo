@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 export class SupplyListService {
   private httpClient = inject(HttpClient);
 
-  readonly inventoryUrl: string = `${environment.apiUrl}supplylist`;
+  readonly supplylistUrl: string = `${environment.apiUrl}supplylist`;
 
   private readonly schoolKey = 'school';
   private readonly gradeKey = 'grade';
@@ -56,6 +56,6 @@ export class SupplyListService {
       }
 
     }
-    return this.httpClient.get<SupplyList[]>(this.inventoryUrl, { params: httpParams });
+    return this.httpClient.get<SupplyList[]>(this.supplylistUrl, { params: httpParams });
   }
 }
