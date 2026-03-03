@@ -95,6 +95,10 @@ public class InventoryController implements Controller {
       Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(COLOR_KEY)), Pattern.CASE_INSENSITIVE);
       filters.add(regex(COLOR_KEY, pattern));
     }
+    if (ctx.queryParamMap().containsKey(SIZE_KEY)) {
+      Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(SIZE_KEY)), Pattern.CASE_INSENSITIVE);
+      filters.add(regex(SIZE_KEY, pattern));
+    }
 
     if (ctx.queryParamMap().containsKey(DESCRIPTION_KEY)) {
       Pattern pattern = Pattern.compile(Pattern.quote(ctx.queryParam(DESCRIPTION_KEY)), Pattern.CASE_INSENSITIVE);

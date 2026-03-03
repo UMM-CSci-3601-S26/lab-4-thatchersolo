@@ -1,6 +1,12 @@
 import { InventoryPage } from "../support/inv.po";
 
 const page = new InventoryPage();
+const Filters_Test = {
+  Item: 'Markers',
+  Brand: 'Crayola',
+  Type: 'Washable',
+  Size: 'Wide'
+}
 
 describe('Inventory', () => {
   beforeEach(() => page.navigateTo());
@@ -108,10 +114,16 @@ describe('Inventory', () => {
     page.getSidenavButton().click();
     page.getNavLink('Inventory').click();
     cy.url().should('match', /\/inventory$/);
-    cy.get('[data-cy="filter-item"]').type('Marker');
+    cy.get('[data-cy="filter-item"]').type(Filters_Test.Item);
+    cy.get('[data-cy="filter-brand"]').type(Filters_Test.Brand);
+    cy.get('[data-cy="filter-type"]').type(Filters_Test.Type);
+    cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
     nextTick(300);
     page.getInventoryRow().first().within(() => {
-      cy.get('[data-cy="inventory-item"]').should('contain', 'Marker');
+      cy.get('[data-cy="inventory-item"]').should('contain', Filters_Test.Item);
+      cy.get('[data-cy="inventory-brand"]').should('contain', Filters_Test.Brand);
+      cy.get('[data-cy="inventory-type"]').should('contain', Filters_Test.Type);
+      cy.get('[data-cy="inventory-size"]').should('contain', Filters_Test.Size);
     });
   });
   // it('should report all empty cells across all pages', () => {
