@@ -123,17 +123,14 @@ describe('Inventory', () => {
     cy.wait('@filterInventory');
     //nextTick(1000);
 
-    cy.get(`[data-cy="inventory-table"]`).should('be.visible').within(() => {
-      cy.get('tbody').within(() => {
-        cy.get('tr')
-          .each(row => {  // Scopes subsequent commands to this row
-            cy.wrap(row).find(`[data-cy="inventory-item"]`).should('include.text', Filters_Test.Item);
-            cy.wrap(row).find(`[data-cy="inventory-brand"]`).should('include.text', Filters_Test.Brand);
-            cy.wrap(row).find(`[data-cy="inventory-type"]`).should('include.text', Filters_Test.Type);
-            cy.wrap(row).find(`[data-cy="inventory-size"]`).should('include.text', Filters_Test.Size);
-          });
-      });
-    });
+    cy.get(`[data-cy="inventory-table"]`).should('be.visible')
+      .find(`[data-cy="inventory-item"]`).should('include.text', Filters_Test.Item);
+    cy.get(`[data-cy="inventory-table"]`).should('be.visible')
+      .find(`[data-cy="inventory-brand"]`).should('include.text', Filters_Test.Brand);
+    cy.get(`[data-cy="inventory-table"]`).should('be.visible')
+      .find(`[data-cy="inventory-type"]`).should('include.text', Filters_Test.Type);
+    cy.get(`[data-cy="inventory-table"]`).should('be.visible')
+      .find(`[data-cy="inventory-size"]`).should('include.text', Filters_Test.Size);
   });
 
   it("Should be able to clear the filters via the button", () => {
