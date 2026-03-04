@@ -120,16 +120,16 @@ describe('Inventory', () => {
     cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
 
     // Wait for the filtered results to load
-    cy.wait('@filterInventory');
+    //cy.wait('@filterInventory');
     nextTick(1000);
 
-    cy.contains(`[data-cy="inventory-item"]`, Filters_Test.Item) // Finds a cell with text Filters_Test.Item
+    cy.get(`[data-cy="inventory-item"]`) // Finds a cell that is an inventory-item
       .parent(`[data-cy="inventory-row"]`)             // Selects the parent row element
-      .within(() => {                // Scopes subsequent commands to this row
-        cy.get(`[data-cy="inventory-item"]`).should('contain', Filters_Test.Item);
-        cy.get(`[data-cy="inventory-brand"]`).should('contain', Filters_Test.Brand);
-        cy.get(`[data-cy="inventory-type"]`).should('contain', Filters_Test.Type);
-        cy.get(`[data-cy="inventory-size"]`).should('contain', Filters_Test.Size);
+      .each(row => {            // Scopes subsequent commands to this row
+        cy.wrap(row).find(`[data-cy="inventory-item"]`).should('contain', Filters_Test.Item);
+        cy.wrap(row).find(`[data-cy="inventory-brand"]`).should('contain', Filters_Test.Brand);
+        cy.wrap(row).find(`[data-cy="inventory-type"]`).should('contain', Filters_Test.Type);
+        cy.wrap(row).find(`[data-cy="inventory-size"]`).should('contain', Filters_Test.Size);
       });
   });
 
