@@ -145,7 +145,7 @@ public class SupplyListController implements Controller {
 
   @Override
   public void addRoutes(Javalin server) {
-    server.get(API_SUPPLYLIST, this::getList);
-    server.get(API_SUPPLYLIST_BY_ID, this::getSupplyLists);
+    server.get(API_SUPPLYLIST, this::getSupplyLists);
+    server.get(API_SUPPLYLIST_BY_ID, this::getList);
   }
 }

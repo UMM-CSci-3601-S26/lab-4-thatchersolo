@@ -18,6 +18,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { SupplyList } from './supplylist';
 import { SupplyListService } from './supplylist.service';
 import { MatTreeModule } from '@angular/material/tree';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-supplylist-component',
@@ -40,7 +41,8 @@ import { MatTreeModule } from '@angular/material/tree';
     MatIconModule,
     MatTreeModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    CommonModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -48,26 +50,17 @@ export class SupplyListComponent {
   displayedColumns: string[] = ['school', 'grade', 'item', 'description', 'brand', 'color', 'size', 'type', 'material', 'count', 'quantity', 'notes'];
   dataSource = new MatTableDataSource<SupplyList>([]);
   readonly sort = viewChild<MatSort>(MatSort);
-  // Returns the children array for a node (Material tree calls this)
-  childrenAccessor = (node: { children?: unknown[] } | null) => node?.children ?? [];
-
-  // Tells the tree which nodes are expandable
-  hasChild = (_: number, node: unknown) => {
-    const n = node as { children?: unknown[] } | null;
-    return !!n && !!n.children && n.children.length > 0;
-  };
 
 
   private snackBar = inject(MatSnackBar);
-  private inventoryService = inject(SupplyListService);
+  private supplylistService = inject(SupplyListService);
 
   constructor() {
     effect(() => {
-      this.dataSource.data = this.serverFilteredInventory();
-      this.dataSource.sort = this.sort();
+      this.dataSource.data = this.serverFilteredSupplyList();
     });
   }
-
+  _id = signal<string | undefined>(undefined);
   school = signal<string | undefined>(undefined);
   grade = signal<string | undefined>(undefined);
   item = signal<string | undefined>(undefined);
@@ -92,11 +85,11 @@ export class SupplyListComponent {
   private description$ = toObservable(this.description);
   private quantity$ = toObservable(this.quantity);
 
-  serverFilteredInventory = toSignal(
+  serverFilteredSupplyList = toSignal(
     combineLatest([this.school$, this.grade$, this.item$, this.brand$, this.color$, this.size$, this.type$, this.material$, this.description$, this.quantity$]).pipe(
       debounceTime(300),
       switchMap(([ school, grade, item, brand, color, size, type, material]) =>
-        this.inventoryService.getSupplyList({ school, grade, item, brand, color, size, type, material})
+        this.supplylistService.getSupplyList({ school, grade, item, brand, color, size, type, material})
       ),
       catchError((err) => {
         const msg = `Problem contacting the server - Error Code: ${err.status}\nMessage: ${err.message}`;
