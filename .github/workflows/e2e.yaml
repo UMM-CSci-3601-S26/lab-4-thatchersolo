@@ -48,5 +48,6 @@ jobs:
     - name: Run e2e tests
       uses: cypress-io/github-action@v7
       with:
+        browser: electron
         command: npm run e2e
         working-directory: ./client
