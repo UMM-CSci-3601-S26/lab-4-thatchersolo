@@ -125,8 +125,7 @@ describe('Inventory', () => {
 
     cy.get(`[data-cy="inventory-table"]`).should('be.visible');
 
-    cy.get(`[data-cy="inventory-item"]`) // Finds a cell that is an inventory-item
-      .parent(`[data-cy="inventory-row"]`)             // Selects the parent row element
+    cy.get(`[data-cy="inventory-row"]`)             // Selects the parent row element
       .each(row => {            // Scopes subsequent commands to this row
         cy.wrap(row).find(`[data-cy="inventory-item"]`).should('contain', Filters_Test.Item);
         cy.wrap(row).find(`[data-cy="inventory-brand"]`).should('contain', Filters_Test.Brand);
