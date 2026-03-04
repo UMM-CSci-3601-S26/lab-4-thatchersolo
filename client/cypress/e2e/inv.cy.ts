@@ -120,7 +120,7 @@ describe('Inventory', () => {
     cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
 
     // Wait for the filtered results to load
-    //cy.wait('@filterInventory');
+    cy.wait('@filterInventory');
     nextTick(1000);
 
     cy.get(`[data-cy="inventory-item"]`) // Finds a cell that is an inventory-item
