@@ -125,7 +125,7 @@ describe('Inventory', () => {
 
     cy.get(`[data-cy="inventory-table"]`).should('be.visible').within(() => {
       cy.get('tbody').within(() => {
-        cy.get(`[data-cy="inventory-row"]`)
+        cy.get('tr')
           .each(row => {  // Scopes subsequent commands to this row
             cy.wrap(row).find(`[data-cy="inventory-item"]`).should('include.text', Filters_Test.Item);
             cy.wrap(row).find(`[data-cy="inventory-brand"]`).should('include.text', Filters_Test.Brand);
