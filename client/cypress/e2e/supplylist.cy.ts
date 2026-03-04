@@ -42,7 +42,7 @@ describe('Supply List', () => {
     page.getSidenav()
       .should('be.hidden');
     nextTick(300)
-    cy.contains('mat-list-item', 'Backpack').should('exist');
+    cy.contains('[data-cy="supplylist-item"]', 'Backpack').should('exist');
   });
 
   // Cypress tests to ensure the filter boxes are there

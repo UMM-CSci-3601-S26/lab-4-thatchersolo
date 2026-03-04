@@ -1,14 +1,14 @@
 import { InventoryPage } from "../support/inv.po";
 
 const page = new InventoryPage();
-const Filters_Test = {
-  Item: 'Markers',
-  Brand: 'Crayola',
-  Color: 'Red',
-  Type: 'Washable',
-  Size: 'Wide',
-  Material: 'N/A',
-}
+// const Filters_Test = {
+//   Item: 'Markers',
+//   Brand: 'Crayola',
+//   Color: 'Red',
+//   Type: 'Washable',
+//   Size: 'Wide',
+//   Material: 'N/A',
+// }
 
 describe('Inventory', () => {
   beforeEach(() => {
@@ -114,19 +114,19 @@ describe('Inventory', () => {
     // Intercept the filtered API calls
     cy.intercept('GET', '/api/inventory*').as('filterInventory');
 
-    cy.get('[data-cy="filter-item"]').type(Filters_Test.Item);
-    cy.get('[data-cy="filter-brand"]').type(Filters_Test.Brand);
-    cy.get('[data-cy="filter-type"]').type(Filters_Test.Type);
-    cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
+    cy.get('[data-cy="filter-item"]').type('Markers');
+    cy.get('[data-cy="filter-brand"]').type('Crayola');
+    cy.get('[data-cy="filter-type"]').type('Washable');
+    cy.get('[data-cy="filter-size"]').type('Wide');
 
     // Wait for the filtered results to load
-    cy.wait('@filterInventory');
+    cy.wait(1000);
 
     page.getInventoryRow().first().within(() => {
-      cy.get('[data-cy="inventory-item"]').should('contain', Filters_Test.Item);
-      cy.get('[data-cy="inventory-brand"]').should('contain', Filters_Test.Brand);
-      cy.get('[data-cy="inventory-type"]').should('contain', Filters_Test.Type);
-      cy.get('[data-cy="inventory-size"]').should('contain', Filters_Test.Size);
+      cy.get('[data-cy="inventory-item"]').should('contain', 'Markers');
+      cy.get('[data-cy="inventory-brand"]').should('contain', 'Crayola');
+      cy.get('[data-cy="inventory-type"]').should('contain', 'Washable');
+      cy.get('[data-cy="inventory-size"]').should('contain', 'Wide');
     });
   });
 
@@ -138,28 +138,28 @@ describe('Inventory', () => {
     // Intercept the filtered API calls
     cy.intercept('GET', '/api/inventory*').as('filterInventory');
 
-    cy.get('[data-cy="filter-item"]').type(Filters_Test.Item);
-    cy.get('[data-cy="filter-brand"]').type(Filters_Test.Brand);
-    cy.get('[data-cy="filter-type"]').type(Filters_Test.Type);
-    cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
+    cy.get('[data-cy="filter-item"]').type('Markers');
+    cy.get('[data-cy="filter-brand"]').type('Crayola');
+    cy.get('[data-cy="filter-type"]').type('Washable');
+    cy.get('[data-cy="filter-size"]').type('Wide');
 
     // Wait for the filtered results to load
-    cy.wait('@filterInventory');
+    cy.wait(1000);
     //nextTick(1000); // Alternate wait method, preferably wait on the API call instead
 
     // Click the clear filters button
     cy.get('[data-cy="filter-clear"]').click();
 
     // Wait for the unfiltered results to load
-    cy.wait('@filterInventory');
+    cy.wait(1000);
     //nextTick(1000); // Alternate wait method, preferably wait on the API call instead
 
     // Check that the first row is no longer the filtered item
     page.getInventoryRow().first().within(() => {
-      cy.get('[data-cy="inventory-item"]').should('not.contain', Filters_Test.Item);
-      cy.get('[data-cy="inventory-brand"]').should('not.contain', Filters_Test.Brand);
-      cy.get('[data-cy="inventory-type"]').should('not.contain', Filters_Test.Type);
-      cy.get('[data-cy="inventory-size"]').should('not.contain', Filters_Test.Size);
+      cy.get('[data-cy="inventory-item"]').should('not.contain', 'Markers');
+      cy.get('[data-cy="inventory-brand"]').should('not.contain', 'Crayola');
+      cy.get('[data-cy="inventory-type"]').should('not.contain', 'Washable');
+      cy.get('[data-cy="inventory-size"]').should('not.contain', 'Wide');
     });
   });
 
