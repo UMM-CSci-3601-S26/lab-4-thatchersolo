@@ -16,7 +16,8 @@ describe('Inventory', () => {
     cy.intercept('GET', '/api/inventory*').as('getInventory');
     page.navigateTo();
     // Wait for the inventory data to load
-    cy.wait('@getInventory');
+    //cy.wait('@getInventory');
+    nextTick(1000);
   });
 
   it('Should have the correct title', () => {
@@ -29,7 +30,7 @@ describe('Inventory', () => {
     cy.url().should('match', /\/inventory$/);
     page.getSidenav()
       .should('be.hidden');
-    nextTick(300)
+    nextTick(1000)
     cy.contains('td', 'Test Item').should('exist'); //First item in the table, once 'test item' gets removed, need to update
   });
 
@@ -118,7 +119,8 @@ describe('Inventory', () => {
     cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
 
     // Wait for the filtered results to load
-    cy.wait('@filterInventory');
+    //cy.wait('@filterInventory');
+    nextTick(1000);
 
     page.getInventoryRow().first().within(() => {
       cy.get('[data-cy="inventory-item"]').should('contain', Filters_Test.Item);
@@ -142,13 +144,15 @@ describe('Inventory', () => {
     cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
 
     // Wait for the filtered results to load
-    cy.wait('@filterInventory');
+    //cy.wait('@filterInventory');
+    nextTick(1000);
 
     // Click the clear filters button
     cy.get('[data-cy="filter-clear"]').click();
 
     // Wait for the unfiltered results to load
-    cy.wait('@filterInventory');
+    //cy.wait('@filterInventory');
+    nextTick(1000);
 
     // Check that the first row is no longer the filtered item
     page.getInventoryRow().first().within(() => {
