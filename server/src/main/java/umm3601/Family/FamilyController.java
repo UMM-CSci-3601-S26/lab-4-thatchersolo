@@ -1,26 +1,32 @@
+// Packages /
 package umm3601.Family;
 
+// Static Imports
+import static com.mongodb.client.model.Filters.eq;
+
+// Java Imports
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// Org Imports
 import org.bson.UuidRepresentation;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonMongoCollection;
 
-import io.javalin.Javalin;
-
+// Com Imports
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 
+// IO Imports
+import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
-import static com.mongodb.client.model.Filters.eq;
-
+// Misc Imports
 import umm3601.Controller;
 
 /* FamilyController Contains the Following:
@@ -32,21 +38,21 @@ import umm3601.Controller;
 - exportFamiliesAsCSV()
 */
 
-/* Notes:
-I'd like to make more checks for adding a family.
-Just dont know how to make it work the way I wish.
-*/
-
+// Controller
 public class FamilyController implements Controller {
+  // API Endpoints
   private static final String API_FAMILY = "/api/family";
   private static final String API_DASHBOARD = "/api/dashboard";
   private static final String API_FAMILY_BY_ID = "/api/family/{id}";
   private static final String API_FAMILY_EXPORT = "/api/family/export";
 
+  // Regex
   public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
+  // Database Collection
   private final JacksonMongoCollection<Family> familyCollection;
 
+  // Database Constructor
   public FamilyController(MongoDatabase database) {
     familyCollection = JacksonMongoCollection.builder().build(
         database,
@@ -114,6 +120,7 @@ public class FamilyController implements Controller {
     ctx.status(HttpStatus.OK);
   }
 
+  // GET dashboard stats
   public void getDashboardStats(Context ctx) {
     ArrayList<Family> families = familyCollection
       .find()
@@ -122,15 +129,18 @@ public class FamilyController implements Controller {
     Map<String, Integer> studentsPerSchool = new HashMap<>();
     Map<String, Integer> studentsPerGrade = new HashMap<>();
 
+    // Loop through all families and their students to count students per school and grade
     for (Family family : families) {
       for (Family.StudentInfo student : family.students) {
-        //count per school
+        // Count per school
         studentsPerSchool.merge(student.school, 1, Integer::sum);
 
-        //count per grade
+        // Count per grade
         studentsPerGrade.merge(student.grade, 1, Integer::sum);
       }
     }
+
+    // Compile results into map to return as JSOn
     Map<String, Object> result = new HashMap<>();
     result.put("studentsPerSchool", studentsPerSchool);
     result.put("studentsPerGrade", studentsPerGrade);
@@ -139,16 +149,17 @@ public class FamilyController implements Controller {
     ctx.json(result);
   }
 
+  // GET export families as CSV
   public void exportFamiliesAsCSV(Context ctx) {
     List<Family> families = familyCollection.find().into(new ArrayList<>());
 
     StringBuilder csv = new StringBuilder();
 
-    // Header
+    // Headers
     csv.append("Guardian Name,Email,Address,Time Slot,Number of Students\n");
 
+    // Fill rows
     for (Family family : families) {
-
       int studentCount = family.students != null ? family.students.size() : 0;
 
       csv.append(String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d\n",
@@ -160,6 +171,7 @@ public class FamilyController implements Controller {
       ));
     }
 
+    // Set response headers for CSV download
     ctx.contentType("text/csv");
     ctx.header("Content-Disposition", "attachment; filename=families.csv");
     ctx.status(HttpStatus.OK);

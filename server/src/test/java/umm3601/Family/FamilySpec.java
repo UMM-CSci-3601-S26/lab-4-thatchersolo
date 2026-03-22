@@ -1,15 +1,20 @@
+// Packages
 package umm3601.Family;
 
+// Static Imports
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Java Imports
 import java.util.Objects;
 
+// Org Imports
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import umm3601.Family.Family;
+//import umm3601.Family.Family;
 
+// FamilySpec Class
 class FamilySpec {
 
   private static final String FAKE_ID_STRING_1 = "fakeIdOne";

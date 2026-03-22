@@ -1,6 +1,8 @@
+// Packages
 package umm3601.Family;
-import static com.mongodb.client.model.Filters.eq;
 
+// Static Imports
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// Java Imports
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+// Org Imports
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterAll;
@@ -28,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+// Com Imports
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -35,6 +40,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+// IO Imports
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
@@ -43,12 +49,12 @@ import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
 import io.javalin.validation.ValidationException;
-import umm3601.Family.Family;
-import umm3601.Family.FamilyController;
+// import umm3601.Family.Family;
+// import umm3601.Family.FamilyController;
 
+// FamilyControllerSpec Class
 @SuppressWarnings({ "MagicNumber" })
 class FamilyControllerSpec {
-
   private FamilyController familyController;
 
   private ObjectId testFamilyId;
