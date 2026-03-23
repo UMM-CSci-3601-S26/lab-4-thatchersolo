@@ -2,10 +2,10 @@
 import { Location } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'; //fakeAsync, flush, tick
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router'; //provideRouter
+import { Router } from '@angular/router';
 
 // RxJS Imports
 import { of, throwError } from 'rxjs'; //of
@@ -89,22 +89,10 @@ describe('AddFamilyComponent', () => {
       expect(guardianNameControl.valid).toBeFalsy();
       expect(guardianNameControl.hasError('maxlength')).toBeTruthy();
     });
-
-    //   it('should fail if we provide an "existing" guardian name', () => {
-    //     // We're assuming that "abc123" and "123abc" already
-    //     // exist so we disallow them.
-    //     guardianNameControl.setValue('abc123');
-    //     expect(guardianNameControl.valid).toBeFalsy();
-    //     expect(guardianNameControl.hasError('existingName')).toBeTruthy();
-
-    //     guardianNameControl.setValue('123abc');
-    //     expect(guardianNameControl.valid).toBeFalsy();
-    //     expect(guardianNameControl.hasError('existingName')).toBeTruthy();
-    //    });
   });
 
   describe('Students FormArray', () => {
-    //confirms input fields are blank
+    // Confirms we start with an empty field
     it('should start with an empty students array', () => {
       const students = addFamilyComponent.students;
       expect(students).toBeDefined();
@@ -129,7 +117,7 @@ describe('AddFamilyComponent', () => {
       expect(students.at(0) instanceof FormGroup).toBeFalse();
     });
 
-    it('when all required fields are valid, the the whole form should be valid', () => {
+    it('should be valid when all fields are filled with correct information', () => {
       addFamilyForm.controls.guardianName.setValue('Chris Smith');
       addFamilyForm.controls.address.setValue('123 Avenue');
       addFamilyForm.controls.timeSlot.setValue('9:00-10:00');
@@ -145,85 +133,89 @@ describe('AddFamilyComponent', () => {
       expect(addFamilyForm.valid).toBeTrue();
     });
 
-    //test student name input
     it('should validate student name', () => {
       addFamilyComponent.addStudent();
       const student = addFamilyComponent.students.at(0);
 
-      //name should not be valid if there is no input
+      // Name should not be valid if there is no input
       const name = student.get('name')!;
       name.setValue('');
       expect(name.valid).toBeFalse();
       expect(name.hasError('required')).toBeTrue();
 
-      //name should not be valid unless there is more than one character in input
+      // Name should not be valid unless there is more than one character in input
       name.setValue('A');
       expect(name.valid).toBeFalse();
       expect(name.hasError('minlength')).toBeTrue();
 
-      //when set to "Lilly" the code should recognize this name as a valid input
+      // Name should be valid
       name.setValue('Lilly');
       expect(name.valid).toBeTrue();
     });
 
-    //test grade input
-    it('should validate student grade or integer and "Kindergarten" and "Pre-K"', () => {
+    it('should validate student grade, "Kindergarten", and "Pre-K"', () => {
       addFamilyComponent.addStudent();
       const student = addFamilyComponent.students.at(0);
 
-      //should not be valid without input
+      // Should be invalid with no input
       const grade = student.get('grade')!;
       grade.setValue('');
       expect(grade.valid).toBeFalse();
       expect(grade.hasError('required')).toBeTrue();
 
-      //should not be a valid input
+      // Should not be valid
       grade.setValue('abc');
       expect(grade.valid).toBeFalse();
       expect(grade.hasError('pattern')).toBeTrue();
 
-      //mixed values are invalid
+      // Mixed values are invalid
       grade.setValue('k1');
       expect(grade.valid).toBeFalse();
       expect(grade.hasError('pattern')).toBeTrue();
 
-      //integers are valid inputs
+      // Integers outside of 1-12 are invalid
+      grade.setValue('13');
+      expect(grade.valid).toBeFalse();
+
+      // Integers 1-12 are valid
       grade.setValue('5');
       expect(grade.valid).toBeTrue();
 
-      //"kindergarten" should be a invalid input
+      // "kindergarten" is an invalid input
       grade.setValue('kindergarten');
       expect(grade.valid).toBeFalse();
       expect(grade.hasError('pattern')).toBeTrue();
 
-      //"Kindergarten" should be a valid input
+      // "Kindergarten" is a valid input
       grade.setValue('Kindergarten');
       expect(grade.valid).toBeTrue();
 
-      //"pre-k" should be an invalid input
+      // "pre-k" is an an invalid input
       grade.setValue('pre-k');
       expect(grade.valid).toBeFalse();
       expect(grade.hasError('pattern')).toBeTrue();
 
-      //"Pre-K" should be a valid input
+      // "Pre-K" is a valid input
       grade.setValue('Pre-K');
       expect(grade.valid).toBeTrue();
     });
 
-    //test school input
     it('should validate student school', () => {
       addFamilyComponent.addStudent();
       const student = addFamilyComponent.students.at(0);
 
+      // Should be invalid without input
       const school = student.get('school')!;
       school.setValue('');
       expect(school.valid).toBeFalse();
       expect(school.hasError('required')).toBeTrue();
 
+      // Should be invalid without proper length
       school.setValue('A');
       expect(school.valid).toBeFalse();
       expect(school.hasError('minlength')).toBeTrue();
 
+      // Should be valid
       school.setValue('Lincoln Elementary');
       expect(school.valid).toBeTrue();
     });
@@ -270,15 +262,15 @@ describe('AddFamilyComponent', () => {
       expect(emailControl.hasError('required')).toBeTruthy();
     });
 
-    it('should accept legal emails', () => {
-      emailControl.setValue('conniestewart@ohmnet.com');
-      expect(emailControl.valid).toBeTruthy();
-    });
-
     it('should fail without @', () => {
       emailControl.setValue('conniestewart');
       expect(emailControl.valid).toBeFalsy();
       expect(emailControl.hasError('pattern')).toBeTruthy();
+    });
+
+    it('should accept legal emails', () => {
+      emailControl.setValue('conniestewart@ohmnet.com');
+      expect(emailControl.valid).toBeTruthy();
     });
   });
 
@@ -326,9 +318,7 @@ describe('AddFamilyComponent', () => {
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'required': true});
       expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Guardian name is required');
 
-      // We don't need the type statement here because we're not using the
-      // same (previously typed) variable. We could use a `let` and the type statement
-      // if we wanted to create a new variable, though.
+      // Email field should display correct messages
       controlName = 'email';
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'required': true});
       expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Email is required');
@@ -343,6 +333,7 @@ describe('AddFamilyComponent', () => {
       const controlName: 'name' | 'grade' | 'school' = 'name';
       const control = (addFamilyComponent.students.at(studentIndex) as FormGroup).get(controlName);
 
+      // Student field should return correct messages
       control.setErrors({'required': true});
       expect(addFamilyComponent.getStudentErrorMessage(studentIndex, controlName)).toEqual('Student name is required');
 
@@ -411,10 +402,7 @@ describe('AddFamilyComponent#submitForm()', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        {provide: FamilyService, useClass: MockFamilyService }, // A (more-async-tests) - provide + use class of the mock
-        // provideRouter([
-        //   { path: 'family/:id', component: FamilyListComponent }
-        // ])
+        {provide: FamilyService, useClass: MockFamilyService },
       ]
     }).compileComponents().catch(error => {
       expect(error).toBeNull();
@@ -424,7 +412,7 @@ describe('AddFamilyComponent#submitForm()', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AddFamilyComponent);
     component = fixture.componentInstance;
-    familyService = TestBed.inject(FamilyService); // B (more-async-tests) - inject the service as the mock
+    familyService = TestBed.inject(FamilyService);
     location = TestBed.inject(Location);
     // We need to inject the router and the HttpTestingController, but
     // never need to use them. So, we can just inject them into the TestBed
@@ -435,30 +423,13 @@ describe('AddFamilyComponent#submitForm()', () => {
   });
 
   beforeEach(() => {
-    // Set up the form with valid values.
-    // We don't actually have to do this, but it does mean that when we
-    // check that `submitForm()` is called with the right arguments below,
-    // we have some reason to believe that that wasn't passing "by accident".
+    // Set up the form with valid values
     component.addFamilyForm.controls.guardianName.setValue('Chris Smith');
     component.addFamilyForm.controls.address.setValue('123 Avenue');
     component.addFamilyForm.controls.timeSlot.setValue('9:00-10:00');
     component.addFamilyForm.controls.email.setValue('csmith@email.com');
-    //component.addFamilyForm.controls.student.setValue('admin');
   });
 
-  // it('should call addFamily() and handle success response', fakeAsync(() => {
-  //   const addFamilySpy = spyOn(familyService, 'addFamily').and.returnValue(of('1'));
-  //   component.submitForm();
-  //   expect(addFamilySpy).toHaveBeenCalledWith(component.addFamilyForm.value);
-  //   tick();
-  //   expect(location.path()).toBe('/family/1');
-  //   flush();
-  // }));
-
-  // This doesn't need `fakeAsync()`, `tick()`, or `flush() because the
-  // error case doesn't navigate to another page. It just displays an error
-  // message in the snackbar. So, we don't need to worry about the asynchronous
-  // nature of navigation.
   it('should call addFamily() and handle error response', () => {
     // Save the original path so we can check that it doesn't change.
     const path = location.path();
@@ -477,7 +448,6 @@ describe('AddFamilyComponent#submitForm()', () => {
     // Confirm that we're still at the same path.
     expect(location.path()).toBe(path);
   });
-
 
   it('should call addFamily() and handle error response for illegal family', () => {
     // Save the original path so we can check that it doesn't change.
