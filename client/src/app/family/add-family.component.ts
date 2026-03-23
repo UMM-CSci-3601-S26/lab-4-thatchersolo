@@ -34,6 +34,7 @@ export class AddFamilyComponent {
     email: new FormControl('', Validators.compose([
       Validators.required,
       Validators.email,
+      Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/), // Same regex pattern the server uses
     ])),
 
     address: new FormControl('', Validators.required),
@@ -59,7 +60,7 @@ export class AddFamilyComponent {
       ])),
       grade: new FormControl('', Validators.compose([
         Validators.required,
-        Validators.pattern(/^(?:[1-9]|Kindergarten|Pre-K)$/i) // Grades can only be 1-9, Kindergarten, or Pre-K
+        Validators.pattern(/^(?:[1-9]|Kindergarten|Pre-K)$/) // Grades can only be 1-9, Kindergarten, or Pre-K (case-sensitive)
       ])),
       school: new FormControl('', Validators.compose([
         Validators.required,
@@ -82,7 +83,7 @@ export class AddFamilyComponent {
     email: [
       { type: 'required', message: 'Email is required' },
       { type: 'email', message: 'Email must be formatted properly' },
-      { type: 'minlength', message: 'School must be at least 2 characters long' }
+      { type: 'pattern', message: 'Email must be formatted properly' }
     ],
     address: [
       { type: 'required', message: 'Address is required' },
@@ -109,12 +110,20 @@ export class AddFamilyComponent {
     }
   };
 
+  // Form validation helper methods
   formControlHasError(controlName: string): boolean {
-    return this.addFamilyForm.get(controlName).invalid &&
-      (this.addFamilyForm.get(controlName).dirty || this.addFamilyForm.get(controlName).touched);
+    const control = this.addFamilyForm.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
-  getErrorMessage(controlName: keyof typeof this.addFamilyValidationMessages): string {
+  // Student form validation helper methods
+  studentControlHasError(studentIndex: number, controlName: 'name' | 'grade' | 'school'): boolean {
+    const control = (this.students.at(studentIndex) as FormGroup).get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  // Error message helper methods
+  getFamilyErrorMessage(controlName: keyof typeof this.addFamilyValidationMessages): string {
     const messages = this.addFamilyValidationMessages[controlName];
     if (!Array.isArray(messages)) {
       return '';
@@ -124,6 +133,22 @@ export class AddFamilyComponent {
         return message;
       }
     }
+    return 'Unknown error. Please check your form input.';
+  }
+
+  // Student error message helper method
+  // Necessary because the student form is a FormArray nested in FormGroup,
+  // so we need to specify which student and which control we're checking for erros
+  getStudentErrorMessage(studentIndex: number, controlName: 'name' | 'grade' | 'school'): string {
+    const control = (this.students.at(studentIndex) as FormGroup).get(controlName);
+    const messages = this.addFamilyValidationMessages.students[controlName];
+
+    for (const { type, message } of messages) {
+      if (control?.hasError(type)) {
+        return message;
+      }
+    }
+
     return 'Unknown error. Please check your form input.';
   }
 

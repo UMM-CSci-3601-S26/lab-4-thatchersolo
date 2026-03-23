@@ -13,7 +13,7 @@
                 required>
               @if (formControlHasError('guardianName')) {
                 <mat-error data-test="guardianNameError">
-                  {{getErrorMessage('guardianName')}}
+                  {{getFamilyErrorMessage('guardianName')}}
                 </mat-error>
               }
             </mat-form-field>
@@ -24,7 +24,7 @@
                 formControlName="email" required>
               @if (formControlHasError('email')) {
                 <mat-error data-test="emailError">
-                  {{getErrorMessage('email')}}
+                  {{getFamilyErrorMessage('email')}}
                 </mat-error>
               }
             </mat-form-field>
@@ -35,7 +35,7 @@
                 formControlName="address" required>
               @if (formControlHasError('address')) {
                 <mat-error data-test="addressError">
-                  {{getErrorMessage('address')}}
+                  {{getFamilyErrorMessage('address')}}
                 </mat-error>
               }
             </mat-form-field>
@@ -46,7 +46,7 @@
                 formControlName="timeSlot" required>
               @if (formControlHasError('timeSlot')) {
                 <mat-error data-test="timeSlotError">
-                  {{getErrorMessage('timeSlot')}}
+                  {{getFamilyErrorMessage('timeSlot')}}
                 </mat-error>
               }
             </mat-form-field>
@@ -59,35 +59,32 @@
 
                   <mat-form-field>
                     <mat-label>Name</mat-label>
-                    <input matInput formControlName="name"
-                      form ControlName = "name" required>
-                    <!-- @if (formControlHasError('name')) {
+                    <input matInput formControlName="name" required>
+                    @if (studentControlHasError(i, 'name')) {
                       <mat-error data-test="nameError">
-                        {{getErrorMessage('students')}}
+                        {{getStudentErrorMessage(i, 'name')}}
                       </mat-error>
-                    } -->
+                    }
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>Grade</mat-label>
-                    <input matInput formControlName="grade"
-                      form ControlName = "grade" required>
-                    <!-- @if (formControlHasError('grade')) {
+                    <input matInput formControlName="grade" required>
+                    @if (studentControlHasError(i, 'grade')) {
                       <mat-error data-test="gradeError">
-                        {{getErrorMessage('students')}}
+                        {{getStudentErrorMessage(i, 'grade')}}
                       </mat-error>
-                    } -->
+                    }
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>School</mat-label>
-                    <input matInput formControlName="school"
-                      form ControlName = "school" required>
-                    <!-- @if (formControlHasError('school')) {
+                    <input matInput formControlName="school" required>
+                    @if (studentControlHasError(i, 'school')) {
                       <mat-error data-test="schoolError">
-                        {{getErrorMessage('students')}}
+                        {{getStudentErrorMessage(i, 'school')}}
                       </mat-error>
-                    } -->
+                    }
                   </mat-form-field>
 
                   <mat-form-field>

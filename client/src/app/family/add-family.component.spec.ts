@@ -167,7 +167,7 @@ describe('AddFamilyComponent', () => {
     });
 
     //test grade input
-    it('should validate student grade or integer and "K" or "k"', () => {
+    it('should validate student grade or integer and "Kindergarten" and "Pre-K"', () => {
       addFamilyComponent.addStudent();
       const student = addFamilyComponent.students.at(0);
 
@@ -191,12 +191,22 @@ describe('AddFamilyComponent', () => {
       grade.setValue('5');
       expect(grade.valid).toBeTrue();
 
-      //"k" should be a valid input
-      grade.setValue('k');
+      //"kindergarten" should be a invalid input
+      grade.setValue('kindergarten');
+      expect(grade.valid).toBeFalse();
+      expect(grade.hasError('pattern')).toBeTrue();
+
+      //"Kindergarten" should be a valid input
+      grade.setValue('Kindergarten');
       expect(grade.valid).toBeTrue();
 
-      //"K" should be a valid input
-      grade.setValue('K');
+      //"pre-k" should be an invalid input
+      grade.setValue('pre-k');
+      expect(grade.valid).toBeFalse();
+      expect(grade.hasError('pattern')).toBeTrue()
+
+      //"Pre-K" should be a valid input
+      grade.setValue('Pre-K');
       expect(grade.valid).toBeTrue();
     });
 
@@ -259,7 +269,7 @@ describe('AddFamilyComponent', () => {
     it('should fail without @', () => {
       emailControl.setValue('conniestewart');
       expect(emailControl.valid).toBeFalsy();
-      expect(emailControl.hasError('email')).toBeTruthy();
+      expect(emailControl.hasError('pattern')).toBeTruthy();
     });
   });
 
@@ -270,31 +280,31 @@ describe('AddFamilyComponent', () => {
       // map in the component.
       let controlName: keyof typeof addFamilyComponent.addFamilyValidationMessages = 'guardianName';
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'required': true});
-      expect(addFamilyComponent.getErrorMessage(controlName)).toEqual('Guardian name is required');
+      expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Guardian name is required');
 
       // We don't need the type statement here because we're not using the
       // same (previously typed) variable. We could use a `let` and the type statement
       // if we wanted to create a new variable, though.
       controlName = 'email';
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'required': true});
-      expect(addFamilyComponent.getErrorMessage(controlName)).toEqual('Email is required');
+      expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Email is required');
 
       controlName = 'email';
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'email': true});
-      expect(addFamilyComponent.getErrorMessage(controlName)).toEqual('Email must be formatted properly');
+      expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Email must be formatted properly');
     });
 
-    it('should return "Unknown error" if no error message is found', () => {
+    it('should return "Unknown error. Please check your form input." if no error message is found', () => {
       // The type statement is needed to ensure that `controlName` isn't just any
       // random string, but rather one of the keys of the `addFamilyValidationMessages`
       // map in the component.
       const controlName: keyof typeof addFamilyComponent.addFamilyValidationMessages = 'guardianName';
       addFamilyComponent.addFamilyForm.get(controlName).setErrors({'unknown': true});
-      expect(addFamilyComponent.getErrorMessage(controlName)).toEqual('Unknown error');
+      expect(addFamilyComponent.getFamilyErrorMessage(controlName)).toEqual('Unknown error. Please check your form input.');
     });
 
     it('should return an empty string if the validation method is not an array', () => {
-      const result = addFamilyComponent.getErrorMessage('students');
+      const result = addFamilyComponent.getFamilyErrorMessage('students');
       expect(result).toBe('');
     })
   });
