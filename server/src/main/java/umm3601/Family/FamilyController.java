@@ -178,10 +178,10 @@ public class FamilyController implements Controller {
       int studentCount = family.students != null ? family.students.size() : 0;
 
       csv.append(String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d\n",
-        family.guardianName,
-        family.email,
-        family.address,
-        family.timeSlot,
+        cleanUpCSV(family.guardianName),
+        cleanUpCSV(family.email),
+        cleanUpCSV(family.address),
+        cleanUpCSV(family.timeSlot),
         studentCount
       ));
     }
@@ -191,6 +191,30 @@ public class FamilyController implements Controller {
     ctx.header("Content-Disposition", "attachment; filename=families.csv");
     ctx.status(HttpStatus.OK);
     ctx.result(csv.toString());
+  }
+
+  // This method cleans up the CSV to ensure the generated CSV is formatted properly
+  // and won't have issues with any spreadsheet software
+  private static String cleanUpCSV(String value) {
+    // Handle null values
+    if (value == null) {
+      return "";
+    }
+
+    // Clean up line breaks (flatten them). Ensures each family always occupies a single CSV row
+    String cleaned = value
+      .replace("\r\n", " ")
+      .replace("\n", " ")
+      .replace("\r", " ");
+
+    // Put a single ' in front of any =, + , -, or @ to ensure spreadsheet software doesn't see it as a formula
+    // There shouldn't ever be any data like this, but this is just in case
+    if (cleaned.matches("^[\\t ]*[=+\\-@].*")) {
+      cleaned = "'" + cleaned;
+    }
+
+    // Replace " with "" to escape CSV quotes
+    return cleaned.replace("\"", "\"\"");
   }
 
   @Override

@@ -391,4 +391,30 @@ class FamilyControllerSpec {
     assertTrue(csv.contains(
       "\"Bob Jones\",\"bob@email.com\",\"456 Oak Ave\",\"2:00-3:00\",1"));
   }
+
+  @Test
+  void exportFamiliesAsCSVCleansCSV() {
+    // As stated in FamilyController, these shouldn't be possible values,
+    // but the clean up method should handle them just in case
+    Document unsafeFamily = new Document()
+      .append("guardianName", "=CMD(\"calc\")")
+      .append("email", "dumbdwads\"@email.com")
+      .append("address", "123 Evil Beevil\nStreet")
+      .append("timeSlot", "+1:00-2:00")
+      .append("students", List.of());
+
+    db.getCollection("family").insertOne(unsafeFamily);
+
+    familyController.exportFamiliesAsCSV(ctx);
+
+    ArgumentCaptor<String> resultCaptor = ArgumentCaptor.forClass(String.class);
+    verify(ctx).result(resultCaptor.capture());
+
+    String csv = resultCaptor.getValue();
+
+    assertTrue(csv.contains("\"'=CMD(\"\"calc\"\")\""));
+    assertTrue(csv.contains("\"dumbdwads\"\"@email.com\""));
+    assertTrue(csv.contains("\"123 Evil Beevil Street\""));
+    assertTrue(csv.contains("\"'+1:00-2:00\""));
+  }
 }
