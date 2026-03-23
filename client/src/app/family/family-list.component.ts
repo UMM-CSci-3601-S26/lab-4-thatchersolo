@@ -41,7 +41,6 @@ import { FamilyService } from './family.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    FamilyCardComponent
   ],
 })
 

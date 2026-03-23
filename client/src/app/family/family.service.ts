@@ -35,13 +35,13 @@ export class FamilyService {
     return this.httpClient.post<{id: string}>(this.familyUrl, newFamily).pipe(map(response => response.id));
   }
 
-  deleteFamily(id: string): Observable<unknown> {
+  deleteFamily(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.familyUrl}/${id}`);
   }
 
-  getDashboardStats(): Observable<DashboardStats[]> {
+  getDashboardStats(): Observable<DashboardStats> {
     const httpParams: HttpParams = new HttpParams();
-    return this.httpClient.get<DashboardStats[]>(this.dashboardUrl, {
+    return this.httpClient.get<DashboardStats>(this.dashboardUrl, {
       params: httpParams,
     });
   }

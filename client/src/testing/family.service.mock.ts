@@ -93,20 +93,18 @@ export class MockFamilyService implements Pick<FamilyService, 'getFamilyById' | 
       });
     });
 
-    return of([
-      {
-        studentsPerSchool,
-        studentsPerGrade,
-        totalFamilies: MockFamilyService.testFamilies.length
-      }
-    ]);
+    return of({
+      studentsPerSchool,
+      studentsPerGrade,
+      totalFamilies: MockFamilyService.testFamilies.length,
+    });
   }
 
   getFamilies(): Observable<Family[]> {
     return of(MockFamilyService.testFamilies);
   }
 
-  getFamilyById(id: string): Observable<Family> {
+  getFamilyById(id: string): Observable<Family> | null {
     if (id === MockFamilyService.testFamilies[0]._id) {
       return of(MockFamilyService.testFamilies[0]);
     } else if (id === MockFamilyService.testFamilies[1]._id) {
@@ -121,10 +119,10 @@ export class MockFamilyService implements Pick<FamilyService, 'getFamilyById' | 
     return of('1');
   }
 
-  deleteFamily(id: string): Observable<string> {
+  deleteFamily(id: string): Observable<void> {
     console.log('deleteFamily called with', id);
     //added above line so that "id" was being used
-    return of('1');
+    return of(void 0);
   }
 
   exportFamilies(): Observable<string> {

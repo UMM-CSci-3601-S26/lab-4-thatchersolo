@@ -269,14 +269,17 @@ describe('FamilyService', () => {
 
   describe('Deleting a family using `deleteFamily()`', () => {
     it('talks to the right endpoint and is called once', waitForAsync(() => {
-      const mockedMethod = spyOn(httpClient, 'delete').and.returnValue(of({ success: true }));
+      const mockedMethod = spyOn(httpClient, 'delete').and.returnValue(of(void 0));
 
       familyService.deleteFamily('john_id').subscribe((res) => {
-        expect(res).toEqual({success: true});
+        expect(res).toBeUndefined();
 
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(`${familyService.familyUrl}/john_id`);
       });
     }));
   });

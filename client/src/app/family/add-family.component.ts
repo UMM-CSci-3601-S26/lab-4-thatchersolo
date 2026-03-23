@@ -37,7 +37,10 @@ export class AddFamilyComponent {
       Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/), // Same regex pattern the server uses
     ])),
 
-    address: new FormControl('', Validators.required),
+    address: new FormControl('', Validators.compose([
+      Validators.required,
+      Validators.minLength(2),
+    ])),
 
     timeSlot: new FormControl('', Validators.compose([
       Validators.required,
@@ -60,13 +63,13 @@ export class AddFamilyComponent {
       ])),
       grade: new FormControl('', Validators.compose([
         Validators.required,
-        Validators.pattern(/^(?:[1-9]|Kindergarten|Pre-K)$/) // Grades can only be 1-9, Kindergarten, or Pre-K (case-sensitive)
+        Validators.pattern(/^(?:[1-9]|1[0-2]|Kindergarten|Pre-K)$/) // Grades can only be 1-9, Kindergarten, or Pre-K (case-sensitive)
       ])),
       school: new FormControl('', Validators.compose([
         Validators.required,
         Validators.minLength(2),
       ])),
-      requestedSupplies: new FormControl<string[]>([])
+      requestedSupplies: new FormControl<string>('')
     }));
   }
 
@@ -87,7 +90,7 @@ export class AddFamilyComponent {
     ],
     address: [
       { type: 'required', message: 'Address is required' },
-      { type: 'minlength', message: 'School must be at least 2 characters long' }
+      { type: 'minlength', message: 'Address must be at least 2 characters long' }
     ],
     timeSlot: [
       { type: 'required', message: 'Time slot is required' },
@@ -169,16 +172,16 @@ export class AddFamilyComponent {
       })) ?? []
     };
 
-    console.log("Submitting:", JSON.stringify(payload, null, 2));
+    //console.log("Submitting:", JSON.stringify(payload, null, 2)); // Only uncomment during debugging
 
     this.familyService.addFamily(payload).subscribe({
-      next: (newId) => {
+      next: () => {
         this.snackBar.open(
           `Added family ${rawForm.guardianName}`,
           null,
           { duration: 2000 }
         );
-        this.router.navigate(['/family', newId]);
+        this.router.navigate(['/family']);
       },
       error: err => {
         if (err.status === 400) {
