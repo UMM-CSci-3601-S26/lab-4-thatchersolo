@@ -1,14 +1,17 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-//import { Observable } from 'rxjs';
-import { MockFamilyService } from 'src/testing/family.service.mock';
-//import { Family } from './family';
-import { FamilyListComponent } from './family-list.component';
-import { FamilyService } from './family.service';
+// Angular Imports
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+
+// RxJS Imports
 import { Observable, of } from 'rxjs';
+
+// Family Imports
+import { MockFamilyService } from 'src/testing/family.service.mock';
 import { Family } from './family';
+import { FamilyListComponent } from './family-list.component';
+import { FamilyService } from './family.service';
 
 describe('Family list', () => {
   let familyList: FamilyListComponent;

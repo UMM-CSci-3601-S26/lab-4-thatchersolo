@@ -1,7 +1,12 @@
+// Angular Imports
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+
+// RxJS Imports
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+// Family Imports
 import { environment } from '../../environments/environment';
 import { Family, DashboardStats } from './family';
 

@@ -1,10 +1,15 @@
-import { Component, inject } from '@angular/core';
+// Angular Imports
 import { CommonModule } from '@angular/common';
-import { FamilyService } from '../family/family.service';
-import { catchError, of } from 'rxjs';
+import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DashboardStats } from '../family/family';
 import { MatCard, MatCardTitle, MatCardContent } from "@angular/material/card";
+
+// RxJS Imports
+import { catchError, of } from 'rxjs';
+
+// Family Imports
+import { FamilyService } from '../family/family.service';
+import { DashboardStats } from '../family/family';
 
 @Component({
   selector: 'app-family-dash',

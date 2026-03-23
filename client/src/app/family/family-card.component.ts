@@ -1,11 +1,15 @@
+// Angular Imports
+import { CommonModule } from '@angular/common';
 import { Component, input} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
 //import { RouterLink } from '@angular/router';
+
+// Family Imports
 import { Family } from './family';
+
 @Component({
   selector: 'app-family-card',
   templateUrl: './family-card.component.html',
