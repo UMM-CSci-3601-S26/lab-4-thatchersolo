@@ -29,7 +29,7 @@
         "name": "Johnny Jr.",
         "grade": "8",
         "school": "HHS",
-        "requestedSupplies": ["Headphones, Backpack"]
+        "requestedSupplies": ["Headphones", "Backpack"]
       },
       {
         "name": "Burtrum",

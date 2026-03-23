@@ -47,7 +47,7 @@ public class FamilyController implements Controller {
   private static final String API_FAMILY_EXPORT = "/api/family/export";
 
   // Regex
-  public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+  public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
   // Database Collection
   private final JacksonMongoCollection<Family> familyCollection;
@@ -98,6 +98,8 @@ public class FamilyController implements Controller {
     if (newFamily.email == null || !newFamily.email.matches(EMAIL_REGEX)) {
       throw new BadRequestResponse(
         "Family must have a valid email; email was " + newFamily.email + "; family was " + body);
+      // throw new BadRequestResponse("Family must have a valid email.");
+      // Note: This is commented out in favor of the expanded one for development purposes.
     }
 
     familyCollection.insertOne(newFamily);
@@ -109,7 +111,15 @@ public class FamilyController implements Controller {
   // DELETE family
   public void deleteFamily(Context ctx) {
     String id = ctx.pathParam("id");
-    DeleteResult deleteResult = familyCollection.deleteOne(eq("_id", new ObjectId(id)));
+    DeleteResult deleteResult;
+
+    // Handle case where ID is not proper
+    try {
+      ObjectId familyId = new ObjectId(id);
+      deleteResult = familyCollection.deleteOne(eq("_id", familyId));
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestResponse("The requested family id wasn't a legal Mongo Object ID.");
+    }
 
     if (deleteResult.getDeletedCount() != 1) {
       ctx.status(HttpStatus.NOT_FOUND);
@@ -132,6 +142,9 @@ public class FamilyController implements Controller {
 
     // Loop through all families and their students to count students per school and grade
     for (Family family : families) {
+      if (family.students == null) {
+        continue; // Skip families with no students (shouldn't happen, but just in case)
+      }
       for (Family.StudentInfo student : family.students) {
         // Count per school
         studentsPerSchool.merge(student.school, 1, Integer::sum);
@@ -148,6 +161,7 @@ public class FamilyController implements Controller {
     result.put("totalFamilies", families.size());
 
     ctx.json(result);
+    ctx.status(HttpStatus.OK);
   }
 
   // GET export families as CSV
@@ -182,9 +196,9 @@ public class FamilyController implements Controller {
   @Override
   public void addRoutes(Javalin server) {
     // GET routes
-    server.get(API_FAMILY_BY_ID, this::getFamily); // Family by ID
-    server.get(API_FAMILY, this::getFamilies); // All families
     server.get(API_FAMILY_EXPORT, this::exportFamiliesAsCSV); // CSV export
+    server.get(API_FAMILY, this::getFamilies); // All families
+    server.get(API_FAMILY_BY_ID, this::getFamily); // Family by ID
     server.get(API_DASHBOARD, this::getDashboardStats); // Dashboard stats
 
     // POST routes
