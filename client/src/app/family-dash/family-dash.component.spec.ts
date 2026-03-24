@@ -38,5 +38,4 @@ describe('FamilyDashComponent', () => {
 
     expect(errorComponent.dashboardStats()).toBeUndefined();
   });
-
 });

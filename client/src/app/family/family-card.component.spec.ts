@@ -23,7 +23,8 @@ describe('FamilyCardComponent', () => {
     fixture = TestBed.createComponent(FamilyCardComponent);
     component = fixture.componentInstance;
     expectedFamily = {
-    //family with 2 kids
+
+      // Family with two kids
       _id: 'chris_id',
       guardianName: 'Chris',
       address: '123 Street',

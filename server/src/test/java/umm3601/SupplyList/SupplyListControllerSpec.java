@@ -1,21 +1,15 @@
+// Packages
 package umm3601.SupplyList;
 
+// Static Imports
 import static org.junit.jupiter.api.Assertions.assertEquals;
-// import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-// import static org.junit.jupiter.api.Assertions.assertTrue;
-// import static org.mockito.ArgumentMatchers.any;
-// import static org.mockito.ArgumentMatchers.anyString;
-// import static org.mockito.ArgumentMatchers.eq;
-// import static org.mockito.Mockito.mock;
-// import static org.mockito.ArgumentMatchers.any;
-// import static org.mockito.ArgumentMatchers.argThat;
-// import static org.mockito.ArgumentMatchers.any;
-// import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+// Java Imports
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+// Org Imports
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterAll;
@@ -33,9 +28,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-// import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+// Com Imports
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -43,21 +38,20 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+// IO Imports
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-// import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
+
+// Misc Imports
 import umm3601.supplylist.SupplyList;
-// import io.javalin.validation.BodyValidator;
-// import io.javalin.json.JavalinJackson;
 import umm3601.supplylist.SupplyListController;
 
 
 @SuppressWarnings({ "MagicNumber" })
 public class SupplyListControllerSpec {
-
   private SupplyListController supplylistController;
   private ObjectId samsId;
 
@@ -75,6 +69,8 @@ public class SupplyListControllerSpec {
 
   @Captor
   private ArgumentCaptor<Map<String, String>> mapCaptor;
+
+  // -- Test Management -- \\
 
   @BeforeAll
   static void setupAll() {
@@ -167,6 +163,15 @@ public class SupplyListControllerSpec {
   }
 
   @Test
+  void addsRoutes() {
+    Javalin mockServer = mock(Javalin.class);
+    supplylistController.addRoutes(mockServer);
+    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
+  }
+
+  // -- Supply List GET Tests -- \\
+
+  @Test
   void canGetAllSupplyList() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
 
@@ -180,7 +185,7 @@ public class SupplyListControllerSpec {
         supplylistArrayCaptor.getValue().size());
   }
 
-    @Test
+  @Test
   void getListWithExistentId() throws IOException {
     String id = samsId.toHexString();
     when(ctx.pathParam("id")).thenReturn(id);
@@ -216,17 +221,20 @@ public class SupplyListControllerSpec {
     assertEquals("The requested supply list item was not found", exception.getMessage());
   }
 
+  // -- Supply List filter Tests -- \\
+
   @Test
-  void getSupplyListsRejectsNonIntegerQuantity() {
+  void quantityFilterRejectsNonIntegerQuantity() {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("notAnInt")));
     when(ctx.queryParam("quantity")).thenReturn("notAnInt");
 
     BadRequestResponse ex = assertThrows(BadRequestResponse.class, () -> {
       supplylistController.getSupplyLists(ctx);
-  });
+    });
 
     assertEquals("quantity must be an integer.", ex.getMessage());
   }
+
   @Test
   void canFilterSupplyListByItemCaseInsensitive() {
     when(ctx.queryParamMap()).thenReturn(Map.of("item", List.of("pEnCiL")));
@@ -336,7 +344,6 @@ public class SupplyListControllerSpec {
     assertEquals("shoulder bag", supplylistArrayCaptor.getValue().get(0).type);
   }
 
-
   @Test
   void canFilterSupplyListBySchoolCaseInsensitive() {
     when(ctx.queryParamMap()).thenReturn(Map.of("school", List.of("MHS")));
@@ -361,13 +368,6 @@ public class SupplyListControllerSpec {
 
     assertEquals(3, supplylistArrayCaptor.getValue().size());
     assertEquals("PreK", supplylistArrayCaptor.getValue().get(0).grade);
-  }
-
-  @Test
-  void addsRoutes() {
-    Javalin mockServer = mock(Javalin.class);
-    supplylistController.addRoutes(mockServer);
-    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
   }
 }
 

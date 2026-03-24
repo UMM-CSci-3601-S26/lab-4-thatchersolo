@@ -48,10 +48,8 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
-// import umm3601.Family.Family;
-// import umm3601.Family.FamilyController;
 
-// FamilyControllerSpec Class
+
 @SuppressWarnings({ "MagicNumber" })
 class FamilyControllerSpec {
   private FamilyController familyController;
@@ -61,7 +59,6 @@ class FamilyControllerSpec {
   private static MongoClient mongoClient;
   private static MongoDatabase db;
 
-  @SuppressWarnings("unused")
   private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @Mock
@@ -73,12 +70,13 @@ class FamilyControllerSpec {
   @Captor
   private ArgumentCaptor<Family> familyCaptor;
 
-  @SuppressWarnings("unused")
   @Captor
   private ArgumentCaptor<Map<String, String>> mapCaptor;
 
   @Captor
   private ArgumentCaptor<Map<String, Object>> dashboardCaptor;
+
+  // -- Test Management -- \\
 
   @BeforeAll
   static void setupAll() {
@@ -192,6 +190,8 @@ class FamilyControllerSpec {
     verify(mockServer, Mockito.atLeastOnce()).delete(any(), any());
   }
 
+  // -- Family GET tests -- \\
+
   @Test
   void canGetAllFamilies() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
@@ -243,9 +243,10 @@ class FamilyControllerSpec {
     assertEquals("The requested family was not found", exception.getMessage());
   }
 
+  // -- Family POST Tests -- \\
+
   @Test
   void addNewFamily() {
-
     Family newFamily = new Family();
     newFamily.guardianName = "Charlie Brown";
     newFamily.email = "charlie@email.com";
@@ -278,13 +279,40 @@ class FamilyControllerSpec {
 
   @Test
   void addInvalidEmail() {
-
     String json = """
       {
-        "guardianName": "Bad Email",
-        "email": "not-an-email",
-        "address": "123 Street",
-        "timeSlot": "Morning",
+        "guardianName": "Invalid Email",
+        "email": "invalid-email",
+        "address": "",
+        "timeSlot": "",
+        "students": []
+      }
+      """;
+
+    when(ctx.body()).thenReturn(json);
+    when(ctx.bodyValidator(Family.class))
+      .thenReturn(new BodyValidator<>(
+        json,
+        Family.class,
+        () -> javalinJackson.fromJsonString(json, Family.class)
+      ));
+
+    BadRequestResponse exception =
+      assertThrows(BadRequestResponse.class, () -> {
+        familyController.addNewFamily(ctx);
+      });
+
+    assertTrue(exception.getMessage().contains("email was invalid-email"));
+  }
+
+  @Test
+  void addNullEmail() {
+    String json = """
+      {
+        "guardianName": "Null Email",
+        "email": null,
+        "address": "",
+        "timeSlot": "",
         "students": []
       }
       """;
@@ -303,13 +331,13 @@ class FamilyControllerSpec {
       });
 
     assertTrue(exception.getMessage().contains("valid email"));
-    assertTrue(exception.getMessage().contains("email was not-an-email"));
-    assertTrue(exception.getMessage().contains("family was"));
+    assertTrue(exception.getMessage().contains("email was null"));
   }
+
+  // -- Family DELETE Tests -- \\
 
   @Test
   void deleteFoundFamily() {
-
     when(ctx.pathParam("id"))
       .thenReturn(testFamilyId.toString());
 
@@ -324,7 +352,6 @@ class FamilyControllerSpec {
 
   @Test
   void deleteFamilyNotFound() {
-
     // Valid ObjectId format, but not in database
     String nonExistentId = new ObjectId().toString();
     when(ctx.pathParam("id")).thenReturn(nonExistentId);
@@ -341,8 +368,23 @@ class FamilyControllerSpec {
   }
 
   @Test
-  void getDashboardStats() {
+  void deleteFamilyInvalidId() {
+    when(ctx.pathParam("id")).thenReturn("bad");
 
+    Throwable exception = assertThrows(BadRequestResponse.class, () -> {
+      familyController.deleteFamily(ctx);
+    });
+
+    assertEquals(
+      "The requested family id wasn't a legal Mongo Object ID.",
+      exception.getMessage());
+  }
+
+
+  // -- Dashboard Tests -- \\
+
+  @Test
+  void getDashboardStats() {
     familyController.getDashboardStats(ctx);
 
     verify(ctx).json(dashboardCaptor.capture());
@@ -359,6 +401,32 @@ class FamilyControllerSpec {
     );
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  void dashboardSkipsFamiliesWithNullStudents() {
+    Document nullStudentsFamily = new Document()
+      .append("guardianName", "Null Students")
+      .append("email", "")
+      .append("address", "")
+      .append("timeSlot", "")
+      .append("students", null);
+
+    db.getCollection("family").insertOne(nullStudentsFamily);
+    familyController.getDashboardStats(ctx);
+
+    verify(ctx).json(dashboardCaptor.capture());
+
+    Map<String, Object> result = dashboardCaptor.getValue();
+
+    // Just check studentsPerSchool since that's where the students data is used
+    Map<String, Integer> studentsPerSchool = (Map<String, Integer>) result.get("studentsPerSchool");
+
+    // Should just be the 3 schools from the setup data, not a "null" school from the new family
+    assertEquals(3, studentsPerSchool.size());
+  }
+
+  // -- CSV Tests -- \\
+
   @Test
   void exportFamiliesAsCSVProducesCorrectCSV() {
     familyController.exportFamiliesAsCSV(ctx);
@@ -371,7 +439,7 @@ class FamilyControllerSpec {
 
     String csv = resultCaptor.getValue();
 
-    // Check header
+    // Check headers
     assertTrue(csv.contains(
       "Guardian Name,Email,Address,Time Slot,Number of Students"));
 
@@ -417,4 +485,52 @@ class FamilyControllerSpec {
     assertTrue(csv.contains("\"123 Evil Beevil Street\""));
     assertTrue(csv.contains("\"'+1:00-2:00\""));
   }
+
+  @Test
+  void exportFamiliesAsCSVWithNoFamilies() {
+    db.getCollection("family").deleteMany(new Document());
+
+    familyController.exportFamiliesAsCSV(ctx);
+
+    ArgumentCaptor<String> resultCaptor = ArgumentCaptor.forClass(String.class);
+    verify(ctx).result(resultCaptor.capture());
+
+    String csv = resultCaptor.getValue();
+
+    // Should just be the headers, no rows
+    assertEquals("Guardian Name,Email,Address,Time Slot,Number of Students\n", csv);
+  }
+
+  @SuppressWarnings("static-access")
+  @Test
+  void cleanUpCSVHandlesNullValues() {
+    db.getCollection("family").deleteMany(new Document());
+
+    String cleaned = familyController.cleanUpCSV(null);
+
+    // Should just be an empty string, not "null" or anything else
+    assertEquals("", cleaned);
+  }
+
+  @Test
+  void exportFamiliesAsCSVHandlesNullStudents() {
+  Document familyWithNullStudents = new Document()
+    .append("guardianName", "Null Students")
+      .append("email", "")
+      .append("address", "")
+      .append("timeSlot", "")
+      .append("students", null);
+
+  db.getCollection("family").insertOne(familyWithNullStudents);
+
+  familyController.exportFamiliesAsCSV(ctx);
+
+  ArgumentCaptor<String> resultCaptor = ArgumentCaptor.forClass(String.class);
+  verify(ctx).result(resultCaptor.capture());
+
+  String csv = resultCaptor.getValue();
+
+  // Should have the family with 0 students
+  assertTrue(csv.contains("\"Null Students\",\"\",\"\",\"\",0"));
+}
 }

@@ -45,13 +45,12 @@ describe('Family list', () => {
 
   it('should load families from service', () => {
     const families = familyList.families();
-    //there is one family
+    // There are 3 families
     expect(families.length).toBe(3);
-    //the guardian of that family is Chris
+    // The first family's guardian is John Johnson
     expect(families[0].guardianName).toBe('John Johnson');
   });
 
-  //Does this not provide any coverage for the CSV test?????
   it('exportFamilies() should be called when CSV is downloaded', () => {
     spyOn(familyService, 'exportFamilies').and.returnValue(of('csv-data'));
 
@@ -70,14 +69,12 @@ describe('Family list', () => {
   });
 });
 
-
-
-// /*
-//  * This test is a little odd, but illustrates how we can use stubs
-//  * to create mock objects (a service in this case) that be used for
-//  * testing. Here we set up the mock FamilyService (familyServiceStub) so that
-//  * _always_ fails (throws an exception) when you request a set of families.
-//  */
+/*
+* This test is a little odd, but illustrates how we can use stubs
+* to create mock objects (a service in this case) that be used for
+* testing. Here we set up the mock FamilyService (familyServiceStub) so that
+* _always_ fails (throws an exception) when you request a set of families.
+*/
 describe('Misbehaving Family List', () => {
   let familyList: FamilyListComponent;
   let fixture: ComponentFixture<FamilyListComponent>;
@@ -105,8 +102,6 @@ describe('Misbehaving Family List', () => {
       imports: [
         FamilyListComponent
       ],
-      // providers:    [ FamilyService ]  // NO! Don't provide the real service!
-      // Provide a test-double instead
       providers: [{
         provide: FamilyService,
         useValue: familyServiceStub
@@ -122,6 +117,6 @@ describe('Misbehaving Family List', () => {
   });
 
   it('it will return an empty array when the service experiences an error', () => {
-    expect(familyList.families()).toEqual([]); //familyList should return an empty array
+    expect(familyList.families()).toEqual([]); // familyList should return an empty array
   });
 });
