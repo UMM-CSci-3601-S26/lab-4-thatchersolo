@@ -12,8 +12,6 @@ import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-//import umm3601.Family.Family;
-
 // FamilySpec Class
 class FamilySpec {
 

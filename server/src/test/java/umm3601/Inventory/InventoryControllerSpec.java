@@ -46,7 +46,7 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 
 
-// InventoryControllerSpec Class
+
 @SuppressWarnings({ "MagicNumber" })
 public class InventoryControllerSpec {
 
@@ -199,6 +199,7 @@ public class InventoryControllerSpec {
 
     assertEquals("The requested inventory item was not found", exception.getMessage());
   }
+
   @Test
   void canFilterInventoryByQuantity() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("5")));
@@ -212,6 +213,7 @@ public class InventoryControllerSpec {
     assertEquals(1, inventoryArrayListCaptor.getValue().size());
     assertEquals("Eraser", inventoryArrayListCaptor.getValue().get(0).item);
   }
+
   @Test
   void getInventoriesRejectsNonIntegerQuantity() {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("notAnInt")));
@@ -223,6 +225,7 @@ public class InventoryControllerSpec {
 
     assertEquals("quantity must be an integer.", ex.getMessage());
   }
+
   @Test
   void canFilterInventoryByItemCaseInsensitive() {
     when(ctx.queryParamMap()).thenReturn(Map.of("item", List.of("pEnCiL")));

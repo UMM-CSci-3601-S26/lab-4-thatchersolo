@@ -48,10 +48,8 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
-// import umm3601.Family.Family;
-// import umm3601.Family.FamilyController;
 
-// FamilyControllerSpec Class
+
 @SuppressWarnings({ "MagicNumber" })
 class FamilyControllerSpec {
   private FamilyController familyController;
@@ -61,7 +59,6 @@ class FamilyControllerSpec {
   private static MongoClient mongoClient;
   private static MongoDatabase db;
 
-  @SuppressWarnings("unused")
   private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @Mock
@@ -73,7 +70,6 @@ class FamilyControllerSpec {
   @Captor
   private ArgumentCaptor<Family> familyCaptor;
 
-  @SuppressWarnings("unused")
   @Captor
   private ArgumentCaptor<Map<String, String>> mapCaptor;
 
@@ -278,7 +274,6 @@ class FamilyControllerSpec {
 
   @Test
   void addInvalidEmail() {
-
     String json = """
       {
         "guardianName": "Bad Email",
@@ -324,7 +319,6 @@ class FamilyControllerSpec {
 
   @Test
   void deleteFamilyNotFound() {
-
     // Valid ObjectId format, but not in database
     String nonExistentId = new ObjectId().toString();
     when(ctx.pathParam("id")).thenReturn(nonExistentId);
@@ -342,7 +336,6 @@ class FamilyControllerSpec {
 
   @Test
   void getDashboardStats() {
-
     familyController.getDashboardStats(ctx);
 
     verify(ctx).json(dashboardCaptor.capture());
