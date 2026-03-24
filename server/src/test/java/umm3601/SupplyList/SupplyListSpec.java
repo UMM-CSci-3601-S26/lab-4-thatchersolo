@@ -1,19 +1,27 @@
+// Packages
 package umm3601.SupplyList;
 
+// Static Imports
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Org Imports
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+// Misc Imports
 import umm3601.supplylist.SupplyList;
+
+
 public class SupplyListSpec {
   private static final String FAKE_ID_STRING_1 = "fakeIdOne";
   private static final String FAKE_ID_STRING_2 = "fakeIdTwo";
 
   private SupplyList inv1;
   private SupplyList inv2;
+
+  // -- Test Management -- \\
 
   @BeforeEach
   void setupEach() {
@@ -26,6 +34,8 @@ public class SupplyListSpec {
     inv1.brand = "Ticonderoga";
     inv1.description = "Ticonderoga Pencil";
   }
+
+  // -- Supply List ID Tests -- \\
 
   @Test
   void supplyListWithEqualIdAreEqual() {
@@ -59,7 +69,6 @@ public class SupplyListSpec {
     assertFalse(inv1.equals(FAKE_ID_STRING_1));
   }
 
-
   @Test
   void nullId() {
     inv1._id = null;
@@ -69,10 +78,10 @@ public class SupplyListSpec {
     assertFalse(inv1.equals(inv2));
   }
 
+  // -- Misc Supply List Tests -- \\
+
   @Test
   void listToString() {
-
     assertEquals(inv1.toString(), "Pencil Ticonderoga Ticonderoga Pencil");
   }
-
 }

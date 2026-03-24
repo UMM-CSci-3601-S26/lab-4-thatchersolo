@@ -70,6 +70,8 @@ public class SupplyListControllerSpec {
   @Captor
   private ArgumentCaptor<Map<String, String>> mapCaptor;
 
+  // -- Test Management -- \\
+
   @BeforeAll
   static void setupAll() {
     String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
@@ -161,6 +163,15 @@ public class SupplyListControllerSpec {
   }
 
   @Test
+  void addsRoutes() {
+    Javalin mockServer = mock(Javalin.class);
+    supplylistController.addRoutes(mockServer);
+    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
+  }
+
+  // -- Supply List GET Tests -- \\
+
+  @Test
   void canGetAllSupplyList() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
 
@@ -210,8 +221,10 @@ public class SupplyListControllerSpec {
     assertEquals("The requested supply list item was not found", exception.getMessage());
   }
 
+  // -- Supply List filter Tests -- \\
+
   @Test
-  void getSupplyListsRejectsNonIntegerQuantity() {
+  void quantityFilterRejectsNonIntegerQuantity() {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("notAnInt")));
     when(ctx.queryParam("quantity")).thenReturn("notAnInt");
 
@@ -331,7 +344,6 @@ public class SupplyListControllerSpec {
     assertEquals("shoulder bag", supplylistArrayCaptor.getValue().get(0).type);
   }
 
-
   @Test
   void canFilterSupplyListBySchoolCaseInsensitive() {
     when(ctx.queryParamMap()).thenReturn(Map.of("school", List.of("MHS")));
@@ -356,13 +368,6 @@ public class SupplyListControllerSpec {
 
     assertEquals(3, supplylistArrayCaptor.getValue().size());
     assertEquals("PreK", supplylistArrayCaptor.getValue().get(0).grade);
-  }
-
-  @Test
-  void addsRoutes() {
-    Javalin mockServer = mock(Javalin.class);
-    supplylistController.addRoutes(mockServer);
-    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
   }
 }
 

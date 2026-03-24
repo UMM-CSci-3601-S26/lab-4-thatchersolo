@@ -18,6 +18,8 @@ public class InventorySpec {
   private Inventory inv1;
   private Inventory inv2;
 
+  // -- Test Management -- \\
+
   @BeforeEach
   void setupEach() {
     inv1 = new Inventory();
@@ -27,6 +29,8 @@ public class InventorySpec {
     inv1.brand = "Ticonderoga";
     inv1.description = "Ticonderoga Pencil";
   }
+
+  // -- Inventory ID Tests -- \\
 
   @Test
   void inventoriesWithEqualIdAreEqual() {
@@ -68,6 +72,8 @@ public class InventorySpec {
     assertEquals(inv1.hashCode(), 0);
     assertFalse(inv1.equals(inv2));
   }
+
+  // -- Misc Inventory Tests -- \\
 
   @Test
   void inventoryToString() {

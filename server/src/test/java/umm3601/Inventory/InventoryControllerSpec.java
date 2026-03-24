@@ -46,7 +46,6 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 
 
-
 @SuppressWarnings({ "MagicNumber" })
 public class InventoryControllerSpec {
 
@@ -67,6 +66,8 @@ public class InventoryControllerSpec {
 
   @Captor
   private ArgumentCaptor<Map<String, String>> mapCaptor;
+
+  // -- Test Management -- \\
 
   @BeforeAll
   static void setupAll() {
@@ -151,6 +152,15 @@ public class InventoryControllerSpec {
   }
 
   @Test
+  void addsRoutes() {
+    Javalin mockServer = mock(Javalin.class);
+    inventoryController.addRoutes(mockServer);
+    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
+  }
+
+  // -- Inventory GET Tests -- \\
+
+  @Test
   void canGetAllInventory() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
 
@@ -164,7 +174,7 @@ public class InventoryControllerSpec {
         inventoryArrayListCaptor.getValue().size());
   }
 
-    @Test
+  @Test
   void getInventoryWithExistentId() throws IOException {
     String id = samsId.toHexString();
     when(ctx.pathParam("id")).thenReturn(id);
@@ -200,6 +210,8 @@ public class InventoryControllerSpec {
     assertEquals("The requested inventory item was not found", exception.getMessage());
   }
 
+  // -- Inventory filter Tests -- \\
+
   @Test
   void canFilterInventoryByQuantity() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("5")));
@@ -215,7 +227,7 @@ public class InventoryControllerSpec {
   }
 
   @Test
-  void getInventoriesRejectsNonIntegerQuantity() {
+  void quantitiesFilterRejectsNonIntegerQuantity() {
     when(ctx.queryParamMap()).thenReturn(Map.of("quantity", List.of("notAnInt")));
     when(ctx.queryParam("quantity")).thenReturn("notAnInt");
 
@@ -333,13 +345,6 @@ public class InventoryControllerSpec {
 
     assertEquals(1, inventoryArrayListCaptor.getValue().size());
     assertEquals("shoulder bag", inventoryArrayListCaptor.getValue().get(0).type);
-  }
-
-  @Test
-  void addsRoutes() {
-    Javalin mockServer = mock(Javalin.class);
-    inventoryController.addRoutes(mockServer);
-    verify(mockServer, Mockito.atLeast(1)).get(any(), any());
   }
 }
 

@@ -12,20 +12,22 @@ import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-// FamilySpec Class
 class FamilySpec {
-
   private static final String FAKE_ID_STRING_1 = "fakeIdOne";
   private static final String FAKE_ID_STRING_2 = "fakeIdTwo";
 
   private Family family1;
   private Family family2;
 
+  // -- Test Management -- \\
+
   @BeforeEach
   void setupEach() {
     family1 = new Family();
     family2 = new Family();
   }
+
+  // -- Family ID Tests -- \\
 
   @Test
   void familiesWithEqualIdAreEqual() {

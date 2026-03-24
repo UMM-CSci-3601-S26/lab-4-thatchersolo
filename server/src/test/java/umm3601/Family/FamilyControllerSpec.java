@@ -76,6 +76,8 @@ class FamilyControllerSpec {
   @Captor
   private ArgumentCaptor<Map<String, Object>> dashboardCaptor;
 
+  // -- Test Management -- \\
+
   @BeforeAll
   static void setupAll() {
     String mongoAddr = System.getenv().getOrDefault("MONGO_ADDR", "localhost");
@@ -188,6 +190,8 @@ class FamilyControllerSpec {
     verify(mockServer, Mockito.atLeastOnce()).delete(any(), any());
   }
 
+  // -- Family GET tests -- \\
+
   @Test
   void canGetAllFamilies() throws IOException {
     when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
@@ -239,9 +243,10 @@ class FamilyControllerSpec {
     assertEquals("The requested family was not found", exception.getMessage());
   }
 
+  // -- Family POST Tests -- \\
+
   @Test
   void addNewFamily() {
-
     Family newFamily = new Family();
     newFamily.guardianName = "Charlie Brown";
     newFamily.email = "charlie@email.com";
@@ -302,9 +307,10 @@ class FamilyControllerSpec {
     assertTrue(exception.getMessage().contains("family was"));
   }
 
+  // -- Family DELETE Tests -- \\
+
   @Test
   void deleteFoundFamily() {
-
     when(ctx.pathParam("id"))
       .thenReturn(testFamilyId.toString());
 
@@ -334,6 +340,8 @@ class FamilyControllerSpec {
     assertTrue(exception.getMessage().contains("Was unable to delete Family ID"));
   }
 
+  // -- Dashboard GET Tests -- \\
+
   @Test
   void getDashboardStats() {
     familyController.getDashboardStats(ctx);
@@ -351,6 +359,8 @@ class FamilyControllerSpec {
       result.get("totalFamilies")
     );
   }
+
+  // -- CSV Tests -- \\
 
   @Test
   void exportFamiliesAsCSVProducesCorrectCSV() {
